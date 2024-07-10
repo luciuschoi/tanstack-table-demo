@@ -17,15 +17,22 @@ export const columns = [
     cell: info => <Image src={info.getValue()} width={50} height={50} alt={info.getValue()} className='rounded-full my-1 mx-auto' />,
     footer: props => props.column.id
   }),
-  columnHelper.accessor('first_name', {
-    header: () => 'First Name',
-    cell: info => <div className='px-2'>{info.getValue()}</div>,
-    footer: props => props.column.id
-  }),
-  columnHelper.accessor('last_name', {
-    header: () => 'Last Name',
-    cell: info => <div className='px-2'>{info.getValue()}</div>,
-    footer: props => props.column.id
+  columnHelper.group({
+    id: "full_name",
+    header: () => 'Full Name',
+    footer: props => props.column.id,
+    columns: [
+      columnHelper.accessor('first_name', {
+        header: () => 'First Name',
+        cell: info => <div className='px-2'>{info.getValue()}</div>,
+        footer: props => props.column.id
+      }),
+      columnHelper.accessor('last_name', {
+        header: () => 'Last Name',
+        cell: info => <div className='px-2'>{info.getValue()}</div>,
+        footer: props => props.column.id
+      })
+    ]
   }),
   columnHelper.accessor('sex', {
     header: () => 'Gender',

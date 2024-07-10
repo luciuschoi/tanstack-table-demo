@@ -1,9 +1,9 @@
 'use client'
-import { createColumnHelper, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table'
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table'
 import { getAllUsers } from './data'
 import type { User } from './types'
 import { useEffect, useState } from 'react'
-import { columns } from './columns'
+import { columns_2 } from './columns_2'
 import { MdFirstPage } from "react-icons/md";
 import { MdLastPage } from "react-icons/md";
 import { IoIosArrowBack } from "react-icons/io";
@@ -25,14 +25,14 @@ const DataTable = () => {
       const users = await getAllUsers()
       setData(users)
     }
-    fetchData()
+    fetchData().then(() => 'data fetched')
   }, [])
 
   console.log("data", data)
 
   const table = useReactTable({
     data,
-    columns,
+    columns: columns_2,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -52,8 +52,9 @@ const DataTable = () => {
           <DebouncedInput
             value={globalFilter ?? ""}
             onChange={(value: string) => setGlobalFilter(String(value))}
+            debounce={100}
+            placeholder="Search all columns_2..."
             className="p-2 bg-transparent outline-none border-b-2 w-1/3 focus:w-1/2 duration-300 border-indigo-500"
-            placeholder="Search all columns..."
           />
         </div>
         <DownloadBtn data={data} filename={"users"} />
@@ -65,8 +66,13 @@ const DataTable = () => {
               <tr key={headerGroup.id}>
                 {
                   headerGroup.headers.map(header => (
-                    <th key={header.id} className='border py-2'>
-                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    <th key={header.id} colSpan={header.colSpan} className={'border'}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </th>
                   ))
                 }
@@ -75,9 +81,9 @@ const DataTable = () => {
           }
         </thead>
         <tbody>
-          {
-            table.getFilteredRowModel().rows.length ? (table.getRowModel().rows.map((row, index) => (
-              <tr key={row.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#f3f3f363]'} hover:bg-gray-100`}>
+        {
+          table.getFilteredRowModel().rows.length ? (table.getRowModel().rows.map((row, index) => (
+            <tr key={row.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#f3f3f363]'} hover:bg-gray-100`}>
                 {
                   row.getVisibleCells().map(cell => (
                     <td key={cell.id} className='border'>
@@ -88,19 +94,24 @@ const DataTable = () => {
               </tr>
             ))) : (
               <tr>
-                <td colSpan={columns.length} className='text-center text-gray-400 h-[5rem]'>No data found</td>
+                <td colSpan={columns_2.length} className='text-center text-gray-400 h-[5rem]'>No data found</td>
               </tr>
             )
           }
         </tbody>
-        <tfoot className='bg-gray-100'>
+        <tfoot className='bg-gray-50'>
           {
             table.getFooterGroups().map(footerGroup => (
               <tr key={footerGroup.id}>
                 {
                   footerGroup.headers.map(footer => (
-                    <th key={footer.id} className='border py-2'>
-                      {flexRender(footer.column.columnDef.footer, footer.getContext())}
+                    <th key={footer.id} colSpan={footer.colSpan} className={'border'}>
+                      {footer.isPlaceholder
+                        ? null
+                        : flexRender(
+                          footer.column.columnDef.footer,
+                          footer.getContext()
+                        )}
                     </th>
                   ))
                 }

@@ -7,7 +7,11 @@ interface DebouncedInputProps {
   props: any;
 }
 
-const DebouncedInput = ({ value: initValue, onChange, debounce = 200, ...props }: DebouncedInputProps) => {
+const DebouncedInput = ({
+                          value: initValue,
+                          onChange,
+                          debounce = 200,
+                          ...props }: DebouncedInputProps) => {
   const [value, setValue] = React.useState(initValue)
   useEffect(() => {
     setValue(initValue)
@@ -18,7 +22,7 @@ const DebouncedInput = ({ value: initValue, onChange, debounce = 200, ...props }
       onChange(value);
     }, debounce);
     return () => clearTimeout(timeout);
-  }, [value]);
+  }, [debounce, onChange, value]);
 
 
   return (
